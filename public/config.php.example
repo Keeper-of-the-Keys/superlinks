@@ -1,0 +1,7 @@
+<?php
+$config['dbHost'] = 'localhost';
+$config['dbName'] = 'superlinks';
+$config['dbUser'] = 'superlinks';
+$config['dbPass'] = '';
+$config['dsn'] = 'mysql:dbname='.$config['dbName'].';host='.$config['dbHost'];
+?>

@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become_method: su
+  remote_user: 
+
+  vars:
+    hostname: 
+    document_root: /var/www/html/
+    server_admin: 
+    password_authenticated: lookup('community.general.random_string', length=20)
+    password_public: lookup('community.general.random_string', length=20)
+
+  tasks:
+  - name: include superlinks-setup-tasks-deb.yaml
+    include_tasks: superlinks-setup-tasks-deb.yaml
+
+  handlers:
+  - name: apache restart
+    ansible.builtin.service:
+      name: apache2
+      state: restarted

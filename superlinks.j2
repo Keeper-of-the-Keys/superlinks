@@ -1,0 +1,92 @@
+<VirtualHost *:80>
+	# The ServerName directive sets the request scheme, hostname and port that
+	# the server uses to identify itself. This is used when creating
+	# redirection URLs. In the context of virtual hosts, the ServerName
+	# specifies what hostname must appear in the request's Host: header to
+	# match this virtual host. For the default virtual host (this file) this
+	# value is not decisive as it is used as a last resort host regardless.
+	# However, you must set it for any further virtual host explicitly.
+	ServerName {{ hostname }}
+
+	ServerAdmin {{ server_admin }}
+	DocumentRoot {{ document_root }}
+
+	# Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+	# error, crit, alert, emerg.
+	# It is also possible to configure the loglevel for particular
+	# modules, e.g.
+	#LogLevel info ssl:warn
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+	# For most configuration files from conf-available/, which are
+	# enabled or disabled at a global level, it is possible to
+	# include a line for only one particular virtual host. For example the
+	# following line enables the CGI configuration for this host only
+	# after it has been globally disabled with "a2disconf".
+	#Include conf-available/serve-cgi-bin.conf
+
+        RewriteEngine On
+        RewriteCond %{HTTPS} !=on
+        RewriteRule ^/?(.*) https://{{ hostname }}/$1 [R,L]
+
+	Alias /.well-known/acme-challenge /var/lib/dehydrated/acme-challenges
+	<Directory /var/lib/dehydrated/acme-challenges>
+		Options None
+		AllowOverride None
+		<IfModule mod_authz_core.c>
+			Require all granted
+		</IfModule>
+	</Directory>
+</VirtualHost>
+
+<VirtualHost *:443>
+	DocumentRoot {{ document_root }}
+	ServerAdmin {{ server_admin }}
+
+	SSLEngine on
+	SSLProtocol -all +TLSv1.2 +TLSv1.3
+	SSLCertificateFile /var/lib/dehydrated/certs/{{ hostname }}/fullchain.pem
+	SSLCertificateKeyFile  /var/lib/dehydrated/certs/{{ hostname }}/privkey.pem
+
+	SetEnvIf Request_URI "^/public/.*$" noauth=1
+	SetEnvIf Request_URI "^/mellon/.*$" noauth=1
+	SetEnvIf Request_URI "^/.well-known/acme-challenge/.*$" noauth=1
+
+	<Directory {{ document_root }}/public>
+		RewriteBase /
+		RewriteCond %{REQUEST_FILENAME} !-f
+		RewriteCond %{REQUEST_FILENAME} !-d
+		RewriteRule ^(.*)$ public/index.php?q=$1 [L,QSA]
+	</Directory>
+
+	<Directory {{ document_root }}>
+		RewriteEngine on
+		RewriteBase /
+		RewriteCond %{REQUEST_FILENAME} !-f
+		RewriteCond %{REQUEST_FILENAME} !-d
+		RewriteCond expr "! %{REQUEST_URI} -strmatch '^public/'"
+		RewriteRule ^(.*)$ authenticated/index.php?q=$1 [L,QSA]
+	</Directory>
+
+	<Location /authenticated>
+		Require valid-user
+
+		AuthType "Mellon"
+		MellonEnable "auth"
+		MellonVariable "cookie"
+		MellonSecureCookie On
+	</Location>
+
+	Alias /.well-known/acme-challenge /var/lib/dehydrated/acme-challenges
+	<Directory /var/lib/dehydrated/acme-challenges>
+		Options None
+		AllowOverride None
+		<IfModule mod_authz_core.c>
+			Require all granted
+		</IfModule>
+	</Directory>
+</VirtualHost>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet

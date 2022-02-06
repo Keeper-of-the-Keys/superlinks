@@ -1,0 +1,142 @@
+- name: Install prerequisite packages
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    name:
+    - apache2
+    - libapache2-mod-auth-mellon
+    - mariadb-server
+    - php-mysql
+    - php-fpm
+    state: latest
+  become: true
+
+- name: Create temporary folder for sql schema
+  ansible.builtin.tempfile:
+    state: directory
+  register: temp_folder
+
+- name: Copy mailserver schema
+  ansible.builtin.copy:
+    src: superlinks.schema.sql
+    dest: '{{ temp_folder.path }}'
+
+- name: Create Superlinks database
+  community.mysql.mysql_db:
+    name:
+    - superlinks
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_user: root
+    state: present
+  become: true
+
+- name: Import mailserver db schema
+  community.mysql.mysql_db:
+    name: mailserver
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_user: root
+    state: import
+    target: '{{ temp_folder.path }}/superlinks.schema.sql'
+  become: true
+
+- name: Delete temporary folder
+  ansible.builtin.file:
+    path: '{{ temp_folder.path }}'
+    state: absent
+
+- name: Create authenticated DB user
+  community.mysql.mysql_user:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    name: superlinks
+    password: '{{ password_authenticated }}'
+    priv:
+      'superlinks.*': 'SELECT,INSERT,UPDATE'
+    state: present
+  become: true
+
+- name: Create public DB user
+  community.mysql.mysql_user:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    name: superlinks-public
+    password: '{{ password_public }};
+    priv: 
+      'superlinks.view_public': 'SELECT'
+    state: present
+  become: true
+
+- name: Disable apache mpm_prefork
+  community.general.apache2_module:
+    name: mpm_prefork
+    state: absent
+    ignore_configcheck: true
+  become: true
+
+- name: Enable apache mpm_event
+  community.general.apache2_module:
+    name:
+    - mpm_event
+    - proxy_fcgi
+    - auth_mellon
+    state: present
+  notify: apache restart
+  become: true
+
+- name: Copy mellon.conf
+  ansible.builtin.copy:
+    src: mellon.conf
+    dest: /etc/apache2/conf-available/mellon.conf
+  become: true
+
+- name: Enable mellon.conf
+  ansible.builtin.file:
+    src: ../mellon.conf
+    dest: /etc/apache2/conf-enabled/mellon.conf
+    state: link
+  become: true
+  notify: apache restart
+
+- name: Install superlinks site config
+  ansible.builtin.template:
+    src: superlinks.j2
+    dest: /etc/apache2/sites-available/superlinks.conf
+  become: true
+
+- name: Enable superlinks.conf
+  ansible.builtin.file:
+    src: ../superlinks.conf
+    dest: /etc/apache2/sites-enabled/superlinks.conf
+    state: link
+  become: true
+  notify: apache restart
+
+- name: Create superlinks directory
+  ansible.builtin.file:
+    dest: {{ document_root }}/superlinks
+    state: directory
+    owner: {{ remote_user }}
+    group: www-data
+    mode: 0755
+  become: true
+
+- name: Install source
+  ansible.buitlin.git:
+    repo: 'https://github.com/Keeper-of-the-Keys/superlinks.git'
+    dest: {{ document_root }}/superlinks
+
+- name: Install index.html
+  ansible.builtin.template:
+    src: index.j2
+    dest: {{ document_root }}/index.html
+
+- name: Setup authenticated config.php
+  ansible.builtin.template:
+    src: authenticated/config.php.example
+    dest: {{ document_root }}/superlinks/authenticated/config.php
+    mode: 0640
+
+- name: Setup public config.php
+  ansible.builtin.template:
+    src: public/config.php.example
+    dest: {{ document_root }}/superlinks/public/config.php
+    mode: 0640
+
