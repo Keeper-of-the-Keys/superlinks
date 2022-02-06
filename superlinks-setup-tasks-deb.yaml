@@ -17,7 +17,7 @@
     state: directory
   register: temp_folder
 
-- name: Copy mailserver schema
+- name: Copy superlinks schema
   ansible.builtin.copy:
     src: superlinks.schema.sql
     dest: '{{ temp_folder.path }}'
@@ -31,7 +31,7 @@
     state: present
   become: true
 
-- name: Import mailserver db schema
+- name: Import superlinks db schema
   community.mysql.mysql_db:
     name: superlinks
     login_unix_socket: /var/run/mysqld/mysqld.sock
@@ -83,6 +83,7 @@
   - proxy_fcgi
   - auth_mellon
   - rewrite
+  - ssl
 
 - name: Create mellon folder in apache configuration
   ansible.builtin.file:
