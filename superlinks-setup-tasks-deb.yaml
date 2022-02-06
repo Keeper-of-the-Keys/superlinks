@@ -85,17 +85,29 @@
   - rewrite
   - ssl
 
+- name: Check if mellon files have been previously created
+  ansible.builtin.stat:
+    path: "/etc/apache2/mellon/https_{{ hostname }}.xml"
+  register: mellon_files
+
 - name: Create mellon folder in apache configuration
   ansible.builtin.file:
     dest: /etc/apache2/mellon
     state: directory
   become: true
+  when: mellon_files.stat.exists == false
 
 - name: Initialize mellon files
   ansible.builtin.shell:
     cmd: /usr/sbin/mellon_create_metadata https://{{ hostname }} "https://{{ hostname }}/mellon"
     chdir: /etc/apache2/mellon
   become: true
+  when: mellon_files.stat.exists == false
+
+#TODO
+# - name: Add e-mail address line to melon file to https_{{ hostname }}.xml
+# <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+# needs to be inside <SPSSODescriptor> 
 
 - name: Copy mellon.conf
   ansible.builtin.template:
