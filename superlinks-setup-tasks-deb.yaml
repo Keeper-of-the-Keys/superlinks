@@ -82,6 +82,7 @@
   - mpm_event
   - proxy_fcgi
   - auth_mellon
+  - rewrite
 
 - name: Create mellon folder in apache configuration
   ansible.builtin.file:
