@@ -151,6 +151,7 @@
   ansible.builtin.template:
     src: index.j2
     dest: "{{ document_root }}/index.html"
+  become: true
 
 - name: Setup authenticated config.php
   ansible.builtin.template:
