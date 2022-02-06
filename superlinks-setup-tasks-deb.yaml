@@ -125,7 +125,7 @@
 
 - name: Enable superlinks.conf
   ansible.builtin.file:
-    src: ../superlinks.conf
+    src: ../sites-available/superlinks.conf
     dest: /etc/apache2/sites-enabled/superlinks.conf
     state: link
   become: true
