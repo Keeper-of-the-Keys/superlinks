@@ -132,12 +132,12 @@
 - name: Setup authenticated config.php
   ansible.builtin.template:
     src: authenticated/config.php.example
-    dest: {{ document_root }}/superlinks/authenticated/config.php
+    dest: "{{ document_root }}/superlinks/authenticated/config.php"
     mode: 0640
 
 - name: Setup public config.php
   ansible.builtin.template:
     src: public/config.php.example
-    dest: {{ document_root }}/superlinks/public/config.php
+    dest: "{{ document_root }}/superlinks/public/config.php"
     mode: 0640
 
