@@ -2,6 +2,6 @@
 $config['dbHost'] = 'localhost';
 $config['dbName'] = 'superlinks';
 $config['dbUser'] = 'superlinks';
-$config['dbPass'] = '';
+$config['dbPass'] = '{{ password_authenticated }}';
 $config['dsn'] = 'mysql:dbname='.$config['dbName'].';host='.$config['dbHost'];
 ?>
