@@ -103,8 +103,16 @@
 
 - name: Enable mellon.conf
   ansible.builtin.file:
-    src: ../mellon.conf
+    src: ../conf-available/mellon.conf
     dest: /etc/apache2/conf-enabled/mellon.conf
+    state: link
+  become: true
+  notify: apache restart
+
+- name: Enable php-fpm
+  ansible.builtin.file:
+    src: ../conf-available/php7.4-fpm.conf
+    dest: /etc/apache2/conf-enabled/php7.4-fpm.conf
     state: link
   become: true
   notify: apache restart
