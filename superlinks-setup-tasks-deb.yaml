@@ -120,7 +120,7 @@
   become: true
 
 - name: Install source
-  ansible.buitlin.git:
+  ansible.builtin.git:
     repo: 'https://github.com/Keeper-of-the-Keys/superlinks.git'
     dest: "{{ document_root }}/superlinks"
 
