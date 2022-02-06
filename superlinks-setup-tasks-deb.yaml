@@ -83,10 +83,21 @@
   - proxy_fcgi
   - auth_mellon
 
+- name: Create mellon folder in apache configuration
+  ansible.builtin.file:
+    dest: /etc/apache2/mellon
+    state: directory
+  become: true
+
+- name: Initialize mellon files
+  ansible.builtin.shell:
+    cmd: /usr/sbin/mellon_create_metadata https://{{ hostname }} "https://{{ hostname }}/mellon"
+    chdir: /etc/apache2/mellon
+  become: true
 
 - name: Copy mellon.conf
-  ansible.builtin.copy:
-    src: mellon.conf
+  ansible.builtin.template:
+    src: mellon.j2
     dest: /etc/apache2/conf-available/mellon.conf
   become: true
 
