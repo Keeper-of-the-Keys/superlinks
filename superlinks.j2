@@ -9,7 +9,7 @@
 	ServerName {{ hostname }}
 
 	ServerAdmin {{ server_admin }}
-	DocumentRoot {{ document_root }}
+	DocumentRoot {{ document_root }}/superlinks/
 
 	# Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
 	# error, crit, alert, emerg.
@@ -43,10 +43,19 @@
 
 <VirtualHost *:443>
 	DocumentRoot {{ document_root }}
-	ServerAdmin {{ server_admin }}
+	ServerAdmin {{ server_admin }}/superlinks
 
 	SSLEngine on
-	SSLProtocol -all +TLSv1.2 +TLSv1.3
+	SSLProtocol -all +TLSv1.3 +TLSv1.2
+	SSLCipherSuite EECDH+AESGCM:EDH+AESGCM
+	SSLOpenSSLConfCmd Curves X25519:secp521r1:secp384r1:prime256v1
+	SSLHonorCipherOrder On
+	SSLSessionTickets Off
+	SSLCompression Off
+	SSLUseStapling on
+	SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
+	SSLSessionTickets Off
+
 	SSLCertificateFile /var/lib/dehydrated/certs/{{ hostname }}/fullchain.pem
 	SSLCertificateKeyFile  /var/lib/dehydrated/certs/{{ hostname }}/privkey.pem
 
@@ -54,14 +63,14 @@
 	SetEnvIf Request_URI "^/mellon/.*$" noauth=1
 	SetEnvIf Request_URI "^/.well-known/acme-challenge/.*$" noauth=1
 
-	<Directory {{ document_root }}/public>
+	<Directory {{ document_root }}/superlinks/public>
 		RewriteBase /
 		RewriteCond %{REQUEST_FILENAME} !-f
 		RewriteCond %{REQUEST_FILENAME} !-d
 		RewriteRule ^(.*)$ public/index.php?q=$1 [L,QSA]
 	</Directory>
 
-	<Directory {{ document_root }}>
+	<Directory {{ document_root }}/superlinks>
 		RewriteEngine on
 		RewriteBase /
 		RewriteCond %{REQUEST_FILENAME} !-f
