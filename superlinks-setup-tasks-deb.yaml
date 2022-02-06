@@ -8,6 +8,7 @@
     - mariadb-server
     - php-mysql
     - php-fpm
+    - python3-pymysql
     state: latest
   become: true
 
@@ -58,7 +59,7 @@
   community.mysql.mysql_user:
     login_unix_socket: /var/run/mysqld/mysqld.sock
     name: superlinks-public
-    password: '{{ password_public }};
+    password: '{{ password_public }}'
     priv: 
       'superlinks.view_public': 'SELECT'
     state: present
@@ -111,9 +112,9 @@
 
 - name: Create superlinks directory
   ansible.builtin.file:
-    dest: {{ document_root }}/superlinks
+    dest: "{{ document_root }}/superlinks"
     state: directory
-    owner: {{ remote_user }}
+    owner: '{{ remote_user }}'
     group: www-data
     mode: 0755
   become: true
@@ -121,12 +122,12 @@
 - name: Install source
   ansible.buitlin.git:
     repo: 'https://github.com/Keeper-of-the-Keys/superlinks.git'
-    dest: {{ document_root }}/superlinks
+    dest: "{{ document_root }}/superlinks"
 
 - name: Install index.html
   ansible.builtin.template:
     src: index.j2
-    dest: {{ document_root }}/index.html
+    dest: "{{ document_root }}/index.html"
 
 - name: Setup authenticated config.php
   ansible.builtin.template:
