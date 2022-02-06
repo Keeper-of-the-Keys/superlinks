@@ -32,7 +32,9 @@ CREATE TABLE `superlinks` (
   `created` timestamp NOT NULL DEFAULT current_timestamp(),
   `comment` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`sid`),
-  UNIQUE KEY `superlink` (`superlink`,`user`,`domain`,`permission_level`,`target`) USING HASH
+  KEY `user` (`user`),
+  KEY `superlink` (`superlink`) USING BTREE,
+  KEY `domain` (`domain`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -80,4 +82,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-02-06  1:07:41
+-- Dump completed on 2022-02-06 17:08:44
