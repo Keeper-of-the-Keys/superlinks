@@ -1,7 +1,7 @@
 <location />
-	MellonSPPrivateKeyFile /etc/apache2/mellon/{{ hostname }}.key
-	MellonSPCertFile /etc/apache2/mellon/{{ hostname }}.cert
-	MellonSPMetadataFile /etc/apache2/mellon/{{ hostname }}.xml
+	MellonSPPrivateKeyFile /etc/apache2/mellon/https_{{ hostname }}.key
+	MellonSPCertFile /etc/apache2/mellon/https_{{ hostname }}.cert
+	MellonSPMetadataFile /etc/apache2/mellon/https_{{ hostname }}.xml
 	MellonIdPMetadataFile /etc/apache2/mellon/IdP_metadata.xml
 	MellonEndpointPath /mellon
 	MellonEnable "info"
