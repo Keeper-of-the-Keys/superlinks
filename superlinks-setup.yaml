@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: 
   become_method: su
   remote_user: 
 
