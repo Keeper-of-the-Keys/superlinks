@@ -74,13 +74,15 @@
 
 - name: Enable apache mpm_event
   community.general.apache2_module:
-    name:
-    - mpm_event
-    - proxy_fcgi
-    - auth_mellon
+    name: '{{ item }}'
     state: present
   notify: apache restart
   become: true
+  with_items:
+  - mpm_event
+  - proxy_fcgi
+  - auth_mellon
+
 
 - name: Copy mellon.conf
   ansible.builtin.copy:
