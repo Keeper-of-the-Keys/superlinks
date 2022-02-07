@@ -9,6 +9,7 @@
     - php-mysql
     - php-fpm
     - python3-pymysql
+    - python3-lxml
     state: latest
   become: true
 
