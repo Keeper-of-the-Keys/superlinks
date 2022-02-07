@@ -105,7 +105,7 @@
   when: mellon_files.stat.exists == false
 
 - name: Add e-mail entry to mellon xml
-  ansible.general.xml:
+  community.general.xml:
     path: "/etc/apache2/mellon/https_{{ hostname }}.xml"
     xpath: /EntityDescriptor/SPSSODescriptor
     add_children:
