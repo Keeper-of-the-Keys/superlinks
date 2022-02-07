@@ -108,14 +108,11 @@
 - name: Add e-mail entry to mellon xml
   community.general.xml:
     path: "/etc/apache2/mellon/https_{{ hostname }}.xml"
-    xpath: /EntityDescriptor/SPSSODescriptor
+    xpath: /om:EntityDescriptor/om:SPSSODescriptor
+    namespaces: 
+      om: "urn:oasis:names:tc:SAML:2.0:metadata"
     add_children:
     - NameIDFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
-
-#TODO
-# - name: Add e-mail address line to melon file to https_{{ hostname }}.xml
-# <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
-# needs to be inside <SPSSODescriptor> 
 
 - name: Copy mellon.conf
   ansible.builtin.template:

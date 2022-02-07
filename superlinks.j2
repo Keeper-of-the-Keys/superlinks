@@ -41,6 +41,9 @@
 	</Directory>
 </VirtualHost>
 
+SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
+SSLSessionTickets Off
+
 <VirtualHost *:443>
 	DocumentRoot {{ document_root }}
 	ServerAdmin {{ server_admin }}/superlinks
@@ -53,8 +56,6 @@
 	SSLSessionTickets Off
 	SSLCompression Off
 	SSLUseStapling on
-	SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
-	SSLSessionTickets Off
 
 	SSLCertificateFile /var/lib/dehydrated/certs/{{ hostname }}/fullchain.pem
 	SSLCertificateKeyFile  /var/lib/dehydrated/certs/{{ hostname }}/privkey.pem
