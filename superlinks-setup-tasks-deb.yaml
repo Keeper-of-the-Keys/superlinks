@@ -113,6 +113,7 @@
       om: "urn:oasis:names:tc:SAML:2.0:metadata"
     add_children:
     - NameIDFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
+  become: true
 
 - name: Copy mellon.conf
   ansible.builtin.template:
