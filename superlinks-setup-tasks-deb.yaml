@@ -49,6 +49,7 @@
 - name: Create authenticated DB user
   community.mysql.mysql_user:
     login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_user: root
     name: superlinks
     password: '{{ password_authenticated }}'
     priv:
@@ -59,6 +60,7 @@
 - name: Create public DB user
   community.mysql.mysql_user:
     login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_user: root
     name: superlinks-public
     password: '{{ password_public }}'
     priv: 
@@ -105,6 +107,15 @@
   become: true
   when: mellon_files.stat.exists == false
 
+- name: Check if e-mail entry needs to be added
+  community.general.xml:
+    path: "/etc/apache2/mellon/https_{{ hostname }}.xml"
+    xpath: /om:EntityDescriptor/om:SPSSODescriptor/om:NameIDFormat
+    namespaces:
+      om: "urn:oasis:names:tc:SAML:2.0:metadata"
+    count: yes
+  register: mellon_mail
+
 - name: Add e-mail entry to mellon xml
   community.general.xml:
     path: "/etc/apache2/mellon/https_{{ hostname }}.xml"
@@ -114,6 +125,7 @@
     add_children:
     - NameIDFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
   become: true
+  when: mellon_mail.count < 1
 
 - name: Copy mellon.conf
   ansible.builtin.template:
