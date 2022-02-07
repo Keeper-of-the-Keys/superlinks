@@ -41,11 +41,7 @@ function messageNoSuperLinkFound($superlink) {
 	http_response_code(404);
 	uiHeader('Error - no superlink found');
 	echo('Error - no superlink found for:' . $superlink);
-	echo('<pre>');
-	var_dump($_GET);
-	echo('</pre>');
 	footer();
 }
 
 ?>
-s/([[:space:]]+)(0-9)+([[:space:]]+;[[:space::]]+Serial.*$)/echo "\1$((\2+1))\3"/ge
