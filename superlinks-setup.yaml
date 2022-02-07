@@ -7,8 +7,8 @@
     hostname: 
     document_root: /var/www/html/
     server_admin: 
-    password_authenticated: "{{ lookup('community.general.random_string', length=30) }}"
-    password_public: "{{ lookup('community.general.random_string', length=20) }}"
+    password_authenticated: "{{ lookup('community.general.random_string', length=40, base64=true) }}"
+    password_public: "{{ lookup('community.general.random_string', length=40, base64=true) }}"
 
   tasks:
   - name: include superlinks-setup-tasks-deb.yaml

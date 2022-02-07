@@ -45,8 +45,8 @@ SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
 SSLSessionTickets Off
 
 <VirtualHost *:443>
-	DocumentRoot {{ document_root }}
-	ServerAdmin {{ server_admin }}/superlinks
+	DocumentRoot {{ document_root }}/superlinks
+	ServerAdmin {{ server_admin }}
 
 	SSLEngine on
 	SSLProtocol -all +TLSv1.3 +TLSv1.2

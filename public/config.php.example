@@ -1,7 +1,7 @@
 <?php
 $config['dbHost'] = 'localhost';
 $config['dbName'] = 'superlinks';
-$config['dbUser'] = 'superlinks';
+$config['dbUser'] = 'superlinks-public';
 $config['dbPass'] = '{{ password_public }}';
 $config['dsn'] = 'mysql:dbname='.$config['dbName'].';host='.$config['dbHost'];
 ?>
