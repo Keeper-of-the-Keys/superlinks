@@ -1,2 +1,2 @@
-authenticated/config.php
-public/config.php
+php/authenticated/config.php
+php/public/config.php
