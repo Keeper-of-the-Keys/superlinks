@@ -13,60 +13,8 @@
     state: latest
   become: true
 
-- name: Create temporary folder for sql schema
-  ansible.builtin.tempfile:
-    state: directory
-  register: temp_folder
-
-- name: Copy superlinks schema
-  ansible.builtin.copy:
-    src: superlinks.schema.sql
-    dest: '{{ temp_folder.path }}'
-
-- name: Create Superlinks database
-  community.mysql.mysql_db:
-    name:
-    - superlinks
-    login_unix_socket: /var/run/mysqld/mysqld.sock
-    login_user: root
-    state: present
-  become: true
-
-- name: Import superlinks db schema
-  community.mysql.mysql_db:
-    name: superlinks
-    login_unix_socket: /var/run/mysqld/mysqld.sock
-    login_user: root
-    state: import
-    target: '{{ temp_folder.path }}/superlinks.schema.sql'
-  become: true
-
-- name: Delete temporary folder
-  ansible.builtin.file:
-    path: '{{ temp_folder.path }}'
-    state: absent
-
-- name: Create authenticated DB user
-  community.mysql.mysql_user:
-    login_unix_socket: /var/run/mysqld/mysqld.sock
-    login_user: root
-    name: superlinks
-    password: '{{ password_authenticated }}'
-    priv:
-      'superlinks.*': 'SELECT,INSERT,UPDATE'
-    state: present
-  become: true
-
-- name: Create public DB user
-  community.mysql.mysql_user:
-    login_unix_socket: /var/run/mysqld/mysqld.sock
-    login_user: root
-    name: superlinks-public
-    password: '{{ password_public }}'
-    priv: 
-      'superlinks.view_public': 'SELECT'
-    state: present
-  become: true
+- name: Setup database
+  include_tasks: setup-database.yaml
 
 - name: Disable apache mpm_prefork
   community.general.apache2_module:
@@ -120,7 +68,7 @@
   community.general.xml:
     path: "/etc/apache2/mellon/https_{{ hostname }}.xml"
     xpath: /om:EntityDescriptor/om:SPSSODescriptor
-    namespaces: 
+    namespaces:
       om: "urn:oasis:names:tc:SAML:2.0:metadata"
     add_children:
     - NameIDFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
