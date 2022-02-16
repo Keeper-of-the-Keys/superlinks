@@ -2,12 +2,17 @@
 
 function uiHeader($title) {?>
 <html>
-<head><title><?= $title;?></title></head>
+<head>
+  <title><?= $title;?></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
 <body>
+<div class="w-50 p-3 mx-auto" style="background-color: #eee;">
 <?php
 }
 
 function footer() {?>
+</div>
 </body>
 </html>
 <?php
@@ -21,31 +26,35 @@ function dropdownPermissionLevel($row = '') {
 		$selected = '';
 		$name = 'permission_level';
 	}?>
-		<label>
-			Permission level:
-			<select name='<?= $name;?>'>
-				<option value='private' <?= $selected === 'private' ? 'selected=\'true\'' : '';?>>private</option>
-				<option value='domain' <?= $selected === 'domain' ? 'selected=\'true\'' : '';?>>domain</option>
-				<option value='public' <?= $selected === 'public' ? 'selected=\'true\'' : '';?>>public</option>
-			</select>
-		</label>
+	<div class="form-group">
+		<label for="permission_level" class="form-label">Permission level:</label>
+		<select id="permission_level" class="form-control" name='<?= $name;?>'>
+			<option value='private' <?= $selected === 'private' ? 'selected=\'true\'' : '';?>>private</option>
+			<option value='domain' <?= $selected === 'domain' ? 'selected=\'true\'' : '';?>>domain</option>
+			<option value='public' <?= $selected === 'public' ? 'selected=\'true\'' : '';?>>public</option>
+		</select>
+	</div>
 <?php
 }
 
 function formAddSuperlink($query_parts) {
 	uiHeader('Add Superlink');?>
-	<h1>Add Superlink - <?php echo $query_parts['superlink'];?></h1>
+	<h3>Add Superlink - <?php echo $query_parts['superlink'];?></h3>
 	<form action='<?= 'https://'.$_SERVER['SERVER_NAME'].'/add/'.$query_parts['superlink'];?>' method='post'>
-		<label>
-			Target: 
-			<input type='text' name='target' />
-		</label>
-		<label>
-			Comment:
-			<input type='text' name='comment' />
-		</label>
+		<div class="mb-3">
+			<label for="target" class="form-label">Target:</label>
+			<input id="target" aria-describedby="targetHelp" class="form-control" type='text' name='target'>
+			<div id="targetHelp" class="form-text">Traget url which people will be redirected to.</div>
+		</div>
+		<div class="mb-3">
+			<label for="comment" class="form-label">Comment:</label>
+			<input id="comment" class="form-control" type='text' name='comment'/>
+		</div>
 <?php	dropdownPermissionLevel();?>
-		<input type='submit' value='Add' />
+<br />
+<div class="text-center">
+			<input class="btn btn-primary" type='submit' value='Add' />
+		</div>
 	</form>
 <?php
 	footer();
@@ -58,23 +67,26 @@ function formEditSuperlinks($query_parts, $existingSuperlinks) {
 		$sl = $query_parts['superlink'];
 	}
 	uiHeader('Edit Superlinks for - '.$sl);?>
-	<h1>Edit Superlinks - <?= $sl;?></h1>
+	<h3>Edit Superlinks - <?= $sl;?></h3>
 	<form action='<?= 'https://'.$_SERVER['SERVER_NAME'].'/edit/'.$sl;?>' method='post'>
 <?php
 	foreach ($existingSuperlinks as $row) {?>
 		<input type='hidden' name='edit[<?=$row['sid'];?>][sid]' value='<?= $row['sid'];?>' />
-		<label>
-			Target: 
-			<input type='text' name='edit[<?=$row['sid'];?>][target]' value='<?= $row['target'];?>'/>
-		</label>
-		<label>
-			Comment:
-			<input type='text' name='edit[<?=$row['sid'];?>][comment]' value='<?= $row['comment'];?>'/>
-		</label>
+		<div class="mb-3">
+			<label for="target" class="form-label">Target:</label>
+			<input id="target" aria-describedby="targetHelp" class="form-control" type='text' name='edit[<?=$row['sid'];?>][target]' value='<?= $row['target'];?>'/>
+			<div id="targetHelp" class="form-text">Traget url which people will be redirected to.</div>
+		</div>
+		<div class="mb-3">
+			<label for="comment" class="form-label">Comment:</label>
+			<input id="comment" class="form-control" type='text' name='edit[<?=$row['sid'];?>][comment]' value='<?= $row['comment'];?>'/>
+		</div>
 <?php	dropdownPermissionLevel($row);?>
 		<br />
 <?php }?>
-		<input type='submit' value='Edit' />
+		<div class="text-center">
+			<input class="btn btn-primary" type='submit' value='Save Changes' />
+		</div>
 	</form>
 <?php
 	footer();
@@ -104,5 +116,4 @@ function multipleAvailableSuperlinks($availableSuperlinks, $query_parts, $user_i
 </html>
 <?php
 }
-
 ?>
