@@ -41,18 +41,8 @@
     path: "/etc/apache2/mellon/https_{{ hostname }}.xml"
   register: mellon_files
 
-- name: Create mellon folder in apache configuration
-  ansible.builtin.file:
-    dest: /etc/apache2/mellon
-    state: directory
-  become: true
-  when: mellon_files.stat.exists == false
-
-- name: Initialize mellon files
-  ansible.builtin.shell:
-    cmd: /usr/sbin/mellon_create_metadata https://{{ hostname }} "https://{{ hostname }}/mellon"
-    chdir: /etc/apache2/mellon
-  become: true
+- name: Setup mellon auth
+  include_tasks: setup-mellon-auth.yaml
   when: mellon_files.stat.exists == false
 
 - name: Check if e-mail entry needs to be added

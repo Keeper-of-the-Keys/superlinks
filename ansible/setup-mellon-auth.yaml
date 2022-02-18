@@ -1,0 +1,31 @@
+- name: Create mellon folder in apache configuration
+  ansible.builtin.file:
+    dest: /etc/apache2/mellon
+    state: directory
+  become: true
+
+- name: Initialize mellon files
+  ansible.builtin.shell:
+    cmd: /usr/sbin/mellon_create_metadata https://{{ hostname }} "https://{{ hostname }}/mellon"
+    chdir: /etc/apache2/mellon
+  become: true
+
+- name: Check if e-mail entry needs to be added
+  community.general.xml:
+    path: "/etc/apache2/mellon/https_{{ hostname }}.xml"
+    xpath: /om:EntityDescriptor/om:SPSSODescriptor/om:NameIDFormat
+    namespaces:
+      om: "urn:oasis:names:tc:SAML:2.0:metadata"
+    count: yes
+  register: mellon_mail
+
+- name: Add e-mail entry to mellon xml
+  community.general.xml:
+    path: "/etc/apache2/mellon/https_{{ hostname }}.xml"
+    xpath: /om:EntityDescriptor/om:SPSSODescriptor
+    namespaces:
+      om: "urn:oasis:names:tc:SAML:2.0:metadata"
+    add_children:
+    - NameIDFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
+  become: true
+  when: mellon_mail.count < 1
