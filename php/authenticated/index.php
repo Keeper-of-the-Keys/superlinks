@@ -79,7 +79,7 @@ if (isset($query_parts['superlink']) && !isset($query_parts['operation'])) {
 		$addSuperlink->bindValue(':permission_level', $_POST['permission_level'], PDO::PARAM_STR);
 		$addSuperlink->bindValue(':comment', $_POST['comment'], PDO::PARAM_STR);
 		$addSuperlink->execute();
-		
+
 		header('Location: https://'.$_SERVER['SERVER_NAME'].'/'.$query_parts['superlink']);
 	} else {
 		$checkSuperlinkExistance = $dbh->prepare('select count(*) as \'cnt\' from `superlinks` where binary `superlink` = :superlink and `user` = :username and `domain` = :domain');
@@ -106,8 +106,8 @@ if (isset($query_parts['superlink']) && !isset($query_parts['operation'])) {
 	}
 } else if (isset($query_parts['superlink']) && $query_parts['operation'] === 'edit') {
 	if(isset($_POST) && !empty($_POST['edit']) ) {
-		$updateSuperlink = $dbh->prepare('update `superlinks` set `target` = :target, '.
-										'`permission_level` = :permission_level, `comment` = :comment where `sid` = :sid and `user` = :username and `domain` = :domain');
+		$updateSuperlink = $dbh->prepare(	'update `superlinks` set `target` = :target, '.
+							'`permission_level` = :permission_level, `comment` = :comment where `sid` = :sid and `user` = :username and `domain` = :domain');
 		foreach($_POST['edit'] as $row) {
 			$updateSuperlink->bindValue(':target', $row['target'], PDO::PARAM_STR);
 			$updateSuperlink->bindValue(':username', $user_info['username'], PDO::PARAM_STR);
@@ -115,7 +115,7 @@ if (isset($query_parts['superlink']) && !isset($query_parts['operation'])) {
 			$updateSuperlink->bindValue(':permission_level', $row['permission_level'], PDO::PARAM_STR);
 			$updateSuperlink->bindValue(':comment', $row['comment'], PDO::PARAM_STR);
 			$updateSuperlink->bindValue(':sid', $row['sid'], PDO::PARAM_INT);
-			
+
 			$updateSuperlink->execute();
 		}
 		header('Location: https://'.$_SERVER['SERVER_NAME'].'/'.$query_parts['superlink']);
@@ -127,7 +127,7 @@ if (isset($query_parts['superlink']) && !isset($query_parts['operation'])) {
 		$getUserSuperlinks->execute();
 
 		$existingSuperlinks = $getUserSuperlinks->fetchAll();
-		
+
 		formEditSuperlinks($query_parts, $existingSuperlinks);
 	}
 } else if (isset($query_parts['superlink']) && $query_parts['operation'] === 'editlink') {
@@ -139,7 +139,7 @@ if (isset($query_parts['superlink']) && !isset($query_parts['operation'])) {
 		$getSuperlink->execute();
 
 		$existingSuperlinks = $getSuperlink->fetchAll();
-		
+
 		if (count($existingSuperlinks) === 1) {
 			formEditSuperlinks($query_parts, $existingSuperlinks);
 		} else {
@@ -155,7 +155,7 @@ if (isset($query_parts['superlink']) && !isset($query_parts['operation'])) {
 		$deleteSuperlink->bindValue(':username', $user_info['username'], PDO::PARAM_STR);
 		$deleteSuperlink->bindValue(':domain', $user_info['domain'], PDO::PARAM_STR);
 		$deleteSuperlink->execute();
-		
+
 		if ($deleteSuperlink->rowCount() === 1) {
 			die('Superlink has been deleted.');
 		} else if ($deleteSuperlink->rowCount() > 1) {
@@ -166,7 +166,7 @@ if (isset($query_parts['superlink']) && !isset($query_parts['operation'])) {
 	} else {
 		die('wrong input');
 	}
-} else if ($query_parts['superlink'] == 'list-own' && $query_parts['operation'] == 'action') {
+} else if ($query_parts['superlink'] == 'own' && $query_parts['operation'] == 'list') {
 	$listSuperlinks = $dbh->prepare('select `sid`, `target`, `user`, `domain`, `comment` from `superlinks` where '.
 									'(`user` = :username and `domain` = :domain)');
 
