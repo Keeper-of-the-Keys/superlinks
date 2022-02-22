@@ -110,9 +110,14 @@
     mode: 0755
   become: true
 
-- name: Install source
-  ansible.builtin.git:
-    repo: 'https://github.com/Keeper-of-the-Keys/superlinks.git'
+#- name: Install source
+#  ansible.builtin.git:
+#    repo: 'https://github.com/Keeper-of-the-Keys/superlinks.git'
+#    dest: "{{ document_root }}/superlinks"
+
+- name: Copy php files
+  ansible.builtin.copy:
+    src: php/
     dest: "{{ document_root }}/superlinks"
 
 - name: Install index.html
