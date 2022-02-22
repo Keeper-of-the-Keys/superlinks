@@ -117,7 +117,7 @@
 
 - name: Copy php files
   ansible.builtin.copy:
-    src: php/
+    src: ../php/
     dest: "{{ document_root }}/superlinks"
 
 - name: Install index.html
