@@ -46,10 +46,6 @@ function split_email($email) {
 	}
 }
 
-function not_empty($var) {
-	return !empty($var);
-}
-
 /*****
  * Function to process the query string.
  * Assumes formats:
@@ -63,25 +59,26 @@ function not_empty($var) {
  * - array('operation' => query[0], 'superlink' => query[1]
  * - array('superlink' => query)
  *
+ * If the query string has more parts they will be ignored.
  * Errors:
- * - Throws an exception if count is out of supported range (1 or 2)
+ * - Throws an exception if count is out of supported range (less than 1)
  *
  * Please note this function does *not* evaluate if 'operation' is a valid value.
  *****/
 function split_query($query) {
 	$parts = sl_explode('/', $query);
 
-	array_filter($parts, "not_empty");
+	$parts = array_filter($parts, 'strlen');
 
-	switch (count($parts)) {
-		case 1:
-			return array('superlink' => $parts[0]);
-		case 2:
-			return array(	'operation' => $parts[0],
-					'superlink' => $parts[1],
-				   );
-		default:
-			throw new Exception('Query parts out of range[1-2], count: '.count($parts));
+	$count = count($parts);
+	if ($count == 1) {
+		return array('superlink' => $parts[0]);
+	} else if ($count >= 2) {
+		return array(	'operation' => $parts[0],
+				'superlink' => $parts[1],
+			   );
+	} else {
+		throw new Exception('The query array is empty, how did you get here?');
 	}
 }
 /*****
