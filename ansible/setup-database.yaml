@@ -36,7 +36,7 @@
     login_unix_socket: /var/run/mysqld/mysqld.sock
     login_user: root
     name: superlinks
-    password: {{ password_authenticated }}
+    password: '{{ password_authenticated }}'
     priv:
       'superlinks.*': 'SELECT,INSERT,UPDATE,DELETE'
     state: present
@@ -47,7 +47,7 @@
     login_unix_socket: /var/run/mysqld/mysqld.sock
     login_user: root
     name: superlinks-public
-    password: {{ password_public }}
+    password: '{{ password_public }}'
     priv:
       'superlinks.view_public': 'SELECT'
     state: present
