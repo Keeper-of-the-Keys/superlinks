@@ -5,7 +5,7 @@
 
 - name: Copy superlinks schema
   ansible.builtin.copy:
-    src: superlinks.schema.sql
+    src: ../sql/superlinks.schema.sql
     dest: '{{ temp_folder.path }}'
 
 - name: Create Superlinks database
