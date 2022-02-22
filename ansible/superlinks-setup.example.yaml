@@ -1,12 +1,15 @@
+# Example setup playbook
+# I suggest you copy it and add the relevant parameters to avoid issues if this file changes when pulling.
+# So far I have only created the setup for deb based systems, and some other assumptions are also made (dehydrated for LE)
 ---
-- hosts: 
-  become_method: su
-  remote_user: 
+- hosts:
+  become_method: # { su | sudo }
+  remote_user:
 
   vars:
-    hostname: 
-    document_root: /var/www/html/
-    server_admin: 
+    hostname: # fqdn
+    document_root: /var/www/html/ # path
+    server_admin: # e-mail
     password_authenticated: "{{ lookup('community.general.random_string', length=40, base64=true) }}"
     password_public: "{{ lookup('community.general.random_string', length=40, base64=true) }}"
 
