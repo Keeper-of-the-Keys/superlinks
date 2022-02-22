@@ -10,8 +10,6 @@
     hostname: # fqdn
     document_root: /var/www/html/ # path
     server_admin: # e-mail
-    password_authenticated: "{{ lookup('community.general.random_string', length=40, base64=true) }}"
-    password_public: "{{ lookup('community.general.random_string', length=40, base64=true) }}"
 
   tasks:
   - name: include superlinks-setup-tasks-deb.yaml

@@ -31,6 +31,11 @@
     path: '{{ temp_folder.path }}'
     state: absent
 
+- name: Generate random passwords for DB users
+  ansible.builtin.set_fact:
+    password_authenticated: "{{ lookup('community.general.random_string', length=40) }}"
+    password_public: "{{ lookup('community.general.random_string', length=40) }}"
+
 - name: Create authenticated DB user
   community.mysql.mysql_user:
     login_unix_socket: /var/run/mysqld/mysqld.sock
