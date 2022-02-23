@@ -128,7 +128,7 @@
 
 - name: Setup authenticated config.php
   ansible.builtin.template:
-    src: authenticated/config.php.example
+    src: ../php/authenticated/config.php.example
     dest: "{{ document_root }}/superlinks/authenticated/config.php"
     mode: 0640
     owner: '{{ ansible_user }}'
@@ -137,7 +137,7 @@
 
 - name: Setup public config.php
   ansible.builtin.template:
-    src: public/config.php.example
+    src: ../php/public/config.php.example
     dest: "{{ document_root }}/superlinks/public/config.php"
     mode: 0640
     owner: '{{ ansible_user }}'
