@@ -2,9 +2,11 @@
 
 if [[ "${OSTYPE}" == "linux-gnu"* ]]; then
         firefox_userdata_path=~/.mozilla/firefox
+	firefox_command=`which firefox`
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         firefox_userdata_path="${HOME}/Library/Application Support/Firefox"
+	firefox_command=/Applications/Firefox.app/Contents/MacOS/firefox
 
 elif [[ "$OSTYPE" == "win32" ]]; then
 	# I don't know if this if clause will even work.
@@ -20,7 +22,7 @@ fi
 function detect_firefox_and_warn {
 	firefox_running=`pgrep firefox`
 	if [ ! -z ${firefox_running} ]; then
-		firefox about:restartrequired
+		${firefox_command} about:restartrequired
 	fi
 }
 
