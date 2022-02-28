@@ -37,7 +37,7 @@ if [ -d "${firefox_userdata_path}/${profile_path}" ]; then
 
 		if (( ${go_set} == 0 )) && (( ${go_unset} == 0 )); then
 
-			if [ -f ${firefox_userdata_path}/${profile_path}/user.js ]; then
+			if [ -f "${firefox_userdata_path}/${profile_path}/user.js" ]; then
 				go_user_set=`grep -c 'user_pref("browser.fixup.domainwhitelist.go", true)' "${firefox_userdata_path}/${profile_path}/user.js"`
 				go_user_unset=`grep -c 'user_pref("browser.fixup.domainwhitelist.go", false)' "${firefox_userdata_path}/${profile_path}/user.js"`
 
