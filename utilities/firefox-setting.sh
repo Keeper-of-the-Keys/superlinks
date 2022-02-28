@@ -4,7 +4,7 @@ if [[ "${OSTYPE}" == "linux-gnu"* ]]; then
         firefox_userdata_path=~/.mozilla/firefox
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-        firefox_userdata_path="${HOME}/Application Support/Firefox"
+        firefox_userdata_path="${HOME}/Library/Application Support/Firefox"
 
 elif [[ "$OSTYPE" == "win32" ]]; then
 	# I don't know if this if clause will even work.
