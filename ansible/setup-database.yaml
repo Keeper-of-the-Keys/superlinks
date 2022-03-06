@@ -16,6 +16,7 @@
     login_user: root
     state: present
   become: true
+  register: new_database
 
 - name: Import superlinks db schema
   community.mysql.mysql_db:
@@ -25,6 +26,7 @@
     state: import
     target: '{{ temp_folder.path }}/superlinks.schema.sql'
   become: true
+  when: new_database is changed
 
 - name: Delete temporary folder
   ansible.builtin.file:
